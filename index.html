@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Math Mastery Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: black;
+            padding: 40px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #00ff00, #ffffff);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: black;
+            border: none;
+            padding: 20px 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: black;
+            color: white;
+            border-bottom-color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffffff, #cccccc);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.5s ease forwards;
+            padding: 60px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            color: black;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(255,255,255,0.2);
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card.dark {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card.dark:hover {
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Difficulty Indicator */
+        .difficulty-indicator {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .difficulty-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-dot.active {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Form Elements */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+        }
+
+        .dark .input {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .dark .input:focus {
+            border-color: white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* Button Styles */
+        .btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 5px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .btn.white {
+            background: white;
+            color: black;
+        }
+
+        .btn.white:hover {
+            background: #f0f0f0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn.hint {
+            background: linear-gradient(45deg, #666, #999);
+            margin-bottom: 10px;
+        }
+
+        .btn.hint:hover {
+            background: linear-gradient(45deg, #777, #aaa);
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .btn-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        /* Result Display */
+        .result {
+            background: rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .dark .result {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .result.success {
+            background: rgba(0,255,0,0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+            animation: successPulse 0.5s ease;
+        }
+
+        .result.error {
+            background: rgba(255,0,0,0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+            animation: errorShake 0.5s ease;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Hint Display */
+        .hint {
+            background: rgba(255,255,0,0.1);
+            border: 1px solid rgba(255,255,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-style: italic;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .hint.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Formula Display */
+        .formula {
+            background: rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            border-left: 4px solid #000;
+            position: relative;
+        }
+
+        .dark .formula {
+            background: rgba(255,255,255,0.05);
+            border-left-color: white;
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: black;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .tab-container { flex-direction: column; }
+            .card { padding: 20px; }
+            .btn-grid, .btn-grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Statistics Panel */
+        .stats-panel {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00ff00;
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>Advanced Mathematics Hub</h1>
+            <p>Master Algebra, Fractions, Decimals, Geometry & Volume with Adaptive Difficulty</p>
+        </div>
+    </header>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="overall-progress"></div>
+            </div>
+            <div class="score-display">
+                <span>Overall Progress: </span>
+                <span id="progress-text">0%</span>
+                <span> | Score: </span>
+                <span id="total-score">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+        <div class="container">
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="algebra">Algebra</button>
+                <button class="tab-btn" data-tab="fractions">Fractions</button>
+                <button class="tab-btn" data-tab="decimals">Decimals</button>
+                <button class="tab-btn" data-tab="geometry">Geometry</button>
+                <button class="tab-btn" data-tab="volume">Volume</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Algebra Tab -->
+        <div id="algebra" class="tab-content active">
+            <div class="card">
+                <h2 class="section-title">Algebra Mastery</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <h4 id="algebra-score">0</h4>
+                        <p>Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="algebra-streak">0</h4>
+                        <p>Streak</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="algebra-level">1</h4>
+                        <p>Level</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-indicator">
+                    <div class="difficulty-dot active"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Linear Equations</h3>
+                        <div class="formula">
+                            <p><strong>ax + b = c</strong></p>
+                            <p>Solution: x = (c - b) / a</p>
+                        </div>
+                        
+                        <div class="hint" id="algebra-hint">
+                            <strong>Hint:</strong> <span id="algebra-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showAlgebraHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter coefficient a" class="input" id="algebra-a">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter constant b" class="input" id="algebra-b">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter result c" class="input" id="algebra-c">
+                        </div>
+                        <button onclick="solveLinear()" class="btn">Solve for x</button>
+                        <div id="algebra-result" class="result"></div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Quadratic Equations</h3>
+                        <div class="formula">
+                            <p><strong>ax² + bx + c = 0</strong></p>
+                            <p>x = (-b ± √(b² - 4ac)) / 2a</p>
+                        </div>
+                        
+                        <div class="hint" id="quadratic-hint">
+                            <strong>Hint:</strong> <span id="quadratic-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showQuadraticHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter coefficient a" class="input" id="quad-a">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter coefficient b" class="input" id="quad-b">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Enter constant c" class="input" id="quad-c">
+                        </div>
+                        <button onclick="solveQuadratic()" class="btn">Solve Quadratic</button>
+                        <div id="quadratic-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fractions Tab -->
+        <div id="fractions" class="tab-content">
+            <div class="card dark">
+                <h2 class="section-title">Fraction Operations</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <h4 id="fraction-score">0</h4>
+                        <p>Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="fraction-streak">0</h4>
+                        <p>Streak</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="fraction-level">1</h4>
+                        <p>Level</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-indicator">
+                    <div class="difficulty-dot active"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Rules & Formulas</h3>
+                        <div class="formula">
+                            <p><strong>Addition:</strong> a/b + c/d = (ad + bc) / bd</p>
+                        </div>
+                        <div class="formula">
+                            <p><strong>Subtraction:</strong> a/b - c/d = (ad - bc) / bd</p>
+                        </div>
+                        <div class="formula">
+                            <p><strong>Multiplication:</strong> a/b × c/d = ac / bd</p>
+                        </div>
+                        <div class="formula">
+                            <p><strong>Division:</strong> a/b ÷ c/d = ad / bc</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Fraction Calculator</h3>
+                        
+                        <div class="hint" id="fraction-hint">
+                            <strong>Hint:</strong> <span id="fraction-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showFractionHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="btn-grid">
+                            <input type="number" placeholder="Numerator 1" class="input" id="frac1-num">
+                            <input type="number" placeholder="Denominator 1" class="input" id="frac1-den">
+                        </div>
+                        <div class="btn-grid">
+                            <input type="number" placeholder="Numerator 2" class="input" id="frac2-num">
+                            <input type="number" placeholder="Denominator 2" class="input" id="frac2-den">
+                        </div>
+                        <div class="btn-grid-4">
+                            <button onclick="calculateFractions('add')" class="btn white">+</button>
+                            <button onclick="calculateFractions('subtract')" class="btn white">-</button>
+                            <button onclick="calculateFractions('multiply')" class="btn white">×</button>
+                            <button onclick="calculateFractions('divide')" class="btn white">÷</button>
+                        </div>
+                        <div id="fraction-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decimals Tab -->
+        <div id="decimals" class="tab-content">
+            <div class="card">
+                <h2 class="section-title">Decimal Operations</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <h4 id="decimal-score">0</h4>
+                        <p>Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="decimal-streak">0</h4>
+                        <p>Streak</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="decimal-level">1</h4>
+                        <p>Level</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-indicator">
+                    <div class="difficulty-dot active"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Decimal Calculator</h3>
+                        
+                        <div class="hint" id="decimal-hint">
+                            <strong>Hint:</strong> <span id="decimal-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showDecimalHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" step="any" placeholder="Enter first decimal" class="input" id="decimal1">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" step="any" placeholder="Enter second decimal" class="input" id="decimal2">
+                        </div>
+                        <div class="btn-grid-4">
+                            <button onclick="calculateDecimals('add')" class="btn">+</button>
+                            <button onclick="calculateDecimals('subtract')" class="btn">-</button>
+                            <button onclick="calculateDecimals('multiply')" class="btn">×</button>
+                            <button onclick="calculateDecimals('divide')" class="btn">÷</button>
+                        </div>
+                        <div id="decimal-result" class="result"></div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Fraction to Decimal Converter</h3>
+                        
+                        <div class="hint" id="convert-hint">
+                            <strong>Hint:</strong> <span id="convert-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showConvertHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="text" placeholder="Enter fraction (e.g., 3/4) or decimal" class="input" id="convert-input">
+                        </div>
+                        <button onclick="convertFractionDecimal()" class="btn">Convert</button>
+                        <div id="convert-result" class="result"></div>
+                        
+                        <div style="margin-top: 30px;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 15px;">Decimal Rules</h4>
+                            <div class="formula">
+                                <p><strong>Addition & Subtraction:</strong> Align decimal points</p>
+                                <p><strong>Multiplication:</strong> Count total decimal places</p>
+                                <p><strong>Division:</strong> Move decimal point in both numbers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geometry Tab -->
+        <div id="geometry" class="tab-content">
+            <div class="card dark">
+                <h2 class="section-title">Area & Perimeter Formulas</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <h4 id="geometry-score">0</h4>
+                        <p>Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="geometry-streak">0</h4>
+                        <p>Streak</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="geometry-level">1</h4>
+                        <p>Level</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-indicator">
+                    <div class="difficulty-dot active"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                </div>
+                
+                <div class="grid grid-3">
+                    <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Rectangle</h3>
+                        <div class="formula">
+                            <p><strong>Area:</strong> l × w</p>
+                            <p><strong>Perimeter:</strong> 2(l + w)</p>
+                        </div>
+                        
+                        <div class="hint" id="rect-hint">
+                            <strong>Hint:</strong> <span id="rect-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showRectHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Length" class="input" id="rect-length">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Width" class="input" id="rect-width">
+                        </div>
+                        <button onclick="calculateRectangle()" class="btn white">Calculate</button>
+                        <div id="rect-result" class="result"></div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Circle</h3>
+                        <div class="formula">
+                            <p><strong>Area:</strong> πr²</p>
+                            <p><strong>Circumference:</strong> 2πr</p>
+                        </div>
+                        
+                        <div class="hint" id="circle-hint">
+                            <strong>Hint:</strong> <span id="circle-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showCircleHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Radius" class="input" id="circle-radius">
+                        </div>
+                        <button onclick="calculateCircle()" class="btn white">Calculate</button>
+                        <div id="circle-result" class="result"></div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Triangle</h3>
+                        <div class="formula">
+                            <p><strong>Area:</strong> ½bh</p>
+                            <p><strong>Perimeter:</strong> a + b + c</p>
+                        </div>
+                        
+                        <div class="hint" id="triangle-hint">
+                            <strong>Hint:</strong> <span id="triangle-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showTriangleHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Base" class="input" id="tri-base">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Height" class="input" id="tri-height">
+                        </div>
+                        <button onclick="calculateTriangle()" class="btn white">Calculate Area</button>
+                        <div id="triangle-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volume Tab -->
+        <div id="volume" class="tab-content">
+            <div class="card">
+                <h2 class="section-title">Volume Formulas</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <h4 id="volume-score">0</h4>
+                        <p>Score</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="volume-streak">0</h4>
+                        <p>Streak</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 id="volume-level">1</h4>
+                        <p>Level</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-indicator">
+                    <div class="difficulty-dot active"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                </div>
+                
+                <div class="grid grid-3">
+                    <div style="background: rgba(0,0,0,0.05); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Cube</h3>
+                        <div class="formula">
+                            <p><strong>Volume:</strong> s³</p>
+                            <p><strong>Surface Area:</strong> 6s²</p>
+                        </div>
+                        
+                        <div class="hint" id="cube-hint">
+                            <strong>Hint:</strong> <span id="cube-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showCubeHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Side length" class="input" id="cube-side">
+                        </div>
+                        <button onclick="calculateCube()" class="btn">Calculate</button>
+                        <div id="cube-result" class="result"></div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.05); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Cylinder</h3>
+                        <div class="formula">
+                            <p><strong>Volume:</strong> πr²h</p>
+                            <p><strong>Surface Area:</strong> 2πr(r + h)</p>
+                        </div>
+                        
+                        <div class="hint" id="cylinder-hint">
+                            <strong>Hint:</strong> <span id="cylinder-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showCylinderHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Radius" class="input" id="cyl-radius">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" placeholder="Height" class="input" id="cyl-height">
+                        </div>
+                        <button onclick="calculateCylinder()" class="btn">Calculate</button>
+                        <div id="cyl-result" class="result"></div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.05); padding: 30px; border-radius: 15px;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 20px;">Sphere</h3>
+                        <div class="formula">
+                            <p><strong>Volume:</strong> (4/3)πr³</p>
+                            <p><strong>Surface Area:</strong> 4πr²</p>
+                        </div>
+                        
+                        <div class="hint" id="sphere-hint">
+                            <strong>Hint:</strong> <span id="sphere-hint-text"></span>
+                        </div>
+                        
+                        <button onclick="showSphereHint()" class="btn hint">Show Hint</button>
+                        
+                        <div class="input-group">
+                            <input type="number" placeholder="Radius" class="input" id="sphere-radius">
+                        </div>
+                        <button onclick="calculateSphere()" class="btn">Calculate</button>
+                        <div id="sphere-result" class="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <h3 style="font-size: 2rem; margin-bottom: 20px;">Master Mathematics Step by Step</h3>
+            <p style="font-size: 1.2rem;">Practice with adaptive difficulty to improve your math skills progressively!</p>
+        </div>
+    </footer>
+
+    <script>
+        // Game State Management
+        let gameState = {
+            algebra: { score: 0, streak: 0, level: 1, correctAnswers: 0 },
+            fraction: { score: 0, streak: 0, level: 1, correctAnswers: 0 },
+            decimal: { score: 0, streak: 0, level: 1, correctAnswers: 0 },
+            geometry: { score: 0, streak: 0, level: 1, correctAnswers: 0 },
+            volume: { score: 0, streak: 0, level: 1, correctAnswers: 0 }
+        };
+
+        // Tab Navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and activate button
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        // Progress and Scoring System
+        function updateProgress() {
+            const totalScore = Object.values(gameState).reduce((sum, state) => sum + state.score, 0);
+            const maxPossibleScore = Object.keys(gameState).length * 1000; // 1000 points per category
+            const progressPercent = Math.min((totalScore / maxPossibleScore) * 100, 100);
+            
+            document.getElementById('overall-progress').style.width = progressPercent + '%';
+            document.getElementById('progress-text').textContent = Math.round(progressPercent) + '%';
+            document.getElementById('total-score').textContent = totalScore;
+        }
+
+        function updateStats(category) {
+            const state = gameState[category];
+            document.getElementById(`${category}-score`).textContent = state.score;
+            document.getElementById(`${category}-streak`).textContent = state.streak;
+            document.getElementById(`${category}-level`).textContent = state.level;
+            
+            // Update difficulty indicator
+            const dots = document.querySelectorAll(`#${category} .difficulty-dot`);
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index < state.level);
+            });
+            
+            updateProgress();
+        }
+
+        function addScore(category, points, isCorrect) {
+            const state = gameState[category];
+            
+            if (isCorrect) {
+                state.score += points;
+                state.streak++;
+                state.correctAnswers++;
+                
+                // Level up every 3 correct answers
+                if (state.correctAnswers % 3 === 0 && state.level < 5) {
+                    state.level++;
+                }
+            } else {
+                state.streak = 0;
+            }
+            
+            updateStats(category);
+        }
+
+        // Difficulty Management
+        function getDifficultyMultiplier(category) {
+            const level = gameState[category].level;
+            return Math.pow(2, level - 1); // Exponential difficulty increase
+        }
+
+        function generateRandomNumber(min, max, level) {
+            const baseRange = max - min;
+            const levelMultiplier = Math.pow(2, level - 1);
+            const adjustedMax = Math.min(max * levelMultiplier, 1000);
+            return Math.floor(Math.random() * (adjustedMax - min) + min);
+        }
+
+        // Result Animation Helper
+        function animateResult(elementId, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.classList.remove('success', 'error');
+            element.classList.add(isSuccess ? 'success' : 'error');
+            setTimeout(() => element.classList.remove('success', 'error'), 500);
+        }
+
+        // Hint System
+        const hints = {
+            algebra: {
+                linear: [
+                    "Start by isolating the variable x on one side of the equation",
+                    "Subtract b from both sides first: ax = c - b",
+                    "Then divide both sides by a to get x = (c - b) / a",
+                    "Remember: whatever you do to one side, do to the other side",
+                    "Check your work by substituting x back into the original equation"
+                ],
+                quadratic: [
+                    "Use the quadratic formula: x = (-b ± √(b² - 4ac)) / 2a",
+                    "First calculate the discriminant: b² - 4ac",
+                    "If discriminant < 0, there are no real solutions",
+                    "If discriminant = 0, there is one solution",
+                    "If discriminant > 0, there are two solutions"
+                ]
+            },
+            fraction: [
+                "For addition/subtraction: find common denominator first",
+                "For multiplication: multiply numerators together, denominators together",
+                "For division: multiply by the reciprocal of the second fraction",
+                "Always simplify your final answer by finding the GCD",
+                "Remember: a/b ÷ c/d = a/b × d/c"
+            ],
+            decimal: [
+                "Line up decimal points when adding or subtracting",
+                "Count decimal places in both numbers when multiplying",
+                "Move decimal points to make whole numbers, then adjust result",
+                "Use estimation to check if your answer makes sense",
+                "Remember: 0.1 × 0.1 = 0.01 (two decimal places)"
+            ],
+            geometry: {
+                rectangle: [
+                    "Area = length × width (how much space inside)",
+                    "Perimeter = 2 × (length + width) (distance around edge)",
+                    "Make sure both measurements use the same units",
+                    "Draw a picture to visualize the problem",
+                    "Double-check that length and width are positive"
+                ],
+                circle: [
+                    "Use π ≈ 3.14159 for calculations",
+                    "Area = π × radius²  (r squared, not 2r)",
+                    "Circumference = 2 × π × radius (distance around circle)",
+                    "Radius is half the diameter",
+                    "Make sure you're using radius, not diameter"
+                ],
+                triangle: [
+                    "Area = ½ × base × height",
+                    "Height must be perpendicular to the base",
+                    "Base can be any side of the triangle",
+                    "The height might be outside the triangle sometimes",
+                    "Check that base and height are positive numbers"
+                ]
+            },
+            volume: {
+                cube: [
+                    "Volume = side³ (side × side × side)",
+                    "Surface area = 6 × side² (6 faces, each is side²)",
+                    "All edges of a cube are equal length",
+                    "Think of how many unit cubes fit inside",
+                    "Volume is measured in cubic units"
+                ],
+                cylinder: [
+                    "Volume = π × radius² × height",
+                    "Think of it as a circle stretched upward",
+                    "Surface area includes top, bottom, and curved surface",
+                    "Curved surface area = 2 × π × radius × height",
+                    "Make sure radius and height use same units"
+                ],
+                sphere: [
+                    "Volume = (4/3) × π × radius³",
+                    "Surface area = 4 × π × radius²",
+                    "A sphere is perfectly round in all directions",
+                    "Radius is distance from center to surface",
+                    "Think of how many unit spheres fit inside"
+                ]
+            }
+        };
+
+        // Hint Functions
+        function showAlgebraHint() {
+            const hintElement = document.getElementById('algebra-hint');
+            const hintText = document.getElementById('algebra-hint-text');
+            const randomHint = hints.algebra.linear[Math.floor(Math.random() * hints.algebra.linear.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showQuadraticHint() {
+            const hintElement = document.getElementById('quadratic-hint');
+            const hintText = document.getElementById('quadratic-hint-text');
+            const randomHint = hints.algebra.quadratic[Math.floor(Math.random() * hints.algebra.quadratic.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showFractionHint() {
+            const hintElement = document.getElementById('fraction-hint');
+            const hintText = document.getElementById('fraction-hint-text');
+            const randomHint = hints.fraction[Math.floor(Math.random() * hints.fraction.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showDecimalHint() {
+            const hintElement = document.getElementById('decimal-hint');
+            const hintText = document.getElementById('decimal-hint-text');
+            const randomHint = hints.decimal[Math.floor(Math.random() * hints.decimal.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showConvertHint() {
+            const hintElement = document.getElementById('convert-hint');
+            const hintText = document.getElementById('convert-hint-text');
+            hintText.textContent = "To convert fraction to decimal: divide numerator by denominator. To convert decimal to fraction: count decimal places and use powers of 10.";
+            hintElement.classList.add('show');
+        }
+
+        function showRectHint() {
+            const hintElement = document.getElementById('rect-hint');
+            const hintText = document.getElementById('rect-hint-text');
+            const randomHint = hints.geometry.rectangle[Math.floor(Math.random() * hints.geometry.rectangle.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showCircleHint() {
+            const hintElement = document.getElementById('circle-hint');
+            const hintText = document.getElementById('circle-hint-text');
+            const randomHint = hints.geometry.circle[Math.floor(Math.random() * hints.geometry.circle.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showTriangleHint() {
+            const hintElement = document.getElementById('triangle-hint');
+            const hintText = document.getElementById('triangle-hint-text');
+            const randomHint = hints.geometry.triangle[Math.floor(Math.random() * hints.geometry.triangle.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showCubeHint() {
+            const hintElement = document.getElementById('cube-hint');
+            const hintText = document.getElementById('cube-hint-text');
+            const randomHint = hints.volume.cube[Math.floor(Math.random() * hints.volume.cube.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showCylinderHint() {
+            const hintElement = document.getElementById('cylinder-hint');
+            const hintText = document.getElementById('cylinder-hint-text');
+            const randomHint = hints.volume.cylinder[Math.floor(Math.random() * hints.volume.cylinder.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        function showSphereHint() {
+            const hintElement = document.getElementById('sphere-hint');
+            const hintText = document.getElementById('sphere-hint-text');
+            const randomHint = hints.volume.sphere[Math.floor(Math.random() * hints.volume.sphere.length)];
+            hintText.textContent = randomHint;
+            hintElement.classList.add('show');
+        }
+
+        // Algebra Functions with Adaptive Difficulty
+        function solveLinear() {
+            const level = gameState.algebra.level;
+            const a = parseFloat(document.getElementById('algebra-a').value || 0);
+            const b = parseFloat(document.getElementById('algebra-b').value || 0);
+            const c = parseFloat(document.getElementById('algebra-c').value || 0);
+            
+            if (a === 0) {
+                document.getElementById('algebra-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Coefficient a cannot be zero';
+                animateResult('algebra-result', false);
+                addScore('algebra', 0, false);
+                return;
+            }
+            
+            const x = (c - b) / a;
+            const basePoints = 10;
+            const levelBonus = level * 5;
+            const streakBonus = Math.min(gameState.algebra.streak * 2, 20);
+            const totalPoints = basePoints + levelBonus + streakBonus;
+            
+            document.getElementById('algebra-result').innerHTML = 
+                `<strong>Solution:</strong> x = ${x.toFixed(4)}<br>` +
+                `<strong>Points:</strong> +${totalPoints} (Level ${level} bonus!)`;
+            
+            animateResult('algebra-result', true);
+            addScore('algebra', totalPoints, true);
+            
+            // Generate new problem for next level
+            setTimeout(() => generateNewLinearProblem(), 2000);
+        }
+
+        function generateNewLinearProblem() {
+            const level = gameState.algebra.level;
+            const a = generateRandomNumber(1, 10, level);
+            const b = generateRandomNumber(-20, 20, level);
+            const x = generateRandomNumber(-10, 10, 1); // Keep solution reasonable
+            const c = a * x + b;
+            
+            document.getElementById('algebra-a').value = a;
+            document.getElementById('algebra-b').value = b;
+            document.getElementById('algebra-c').value = c;
+        }
+
+        function solveQuadratic() {
+            const level = gameState.algebra.level;
+            const a = parseFloat(document.getElementById('quad-a').value || 0);
+            const b = parseFloat(document.getElementById('quad-b').value || 0);
+            const c = parseFloat(document.getElementById('quad-c').value || 0);
+            
+            if (a === 0) {
+                document.getElementById('quadratic-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Coefficient a cannot be zero';
+                animateResult('quadratic-result', false);
+                addScore('algebra', 0, false);
+                return;
+            }
+            
+            const discriminant = b * b - 4 * a * c;
+            let resultText = '';
+            
+            if (discriminant < 0) {
+                resultText = '<strong>No real solutions</strong><br>(discriminant < 0)';
+            } else if (discriminant === 0) {
+                const x = -b / (2 * a);
+                resultText = '<strong>One solution:</strong><br>x = ' + x.toFixed(4);
+            } else {
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                resultText = '<strong>Two solutions:</strong><br>x₁ = ' + x1.toFixed(4) + '<br>x₂ = ' + x2.toFixed(4);
+            }
+            
+            const basePoints = 15;
+            const levelBonus = level * 7;
+            const streakBonus = Math.min(gameState.algebra.streak * 3, 30);
+            const totalPoints = basePoints + levelBonus + streakBonus;
+            
+            resultText += `<br><strong>Points:</strong> +${totalPoints} (Level ${level} bonus!)`;
+            
+            document.getElementById('quadratic-result').innerHTML = resultText;
+            animateResult('quadratic-result', true);
+            addScore('algebra', totalPoints, true);
+        }
+
+        // Enhanced Fraction Functions
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function simplifyFraction(num, den) {
+            const g = gcd(Math.abs(num), Math.abs(den));
+            return [num / g, den / g];
+        }
+
+        function calculateFractions(operation) {
+            const level = gameState.fraction.level;
+            const num1 = parseInt(document.getElementById('frac1-num').value || 0);
+            const den1 = parseInt(document.getElementById('frac1-den').value || 0);
+            const num2 = parseInt(document.getElementById('frac2-num').value || 0);
+            const den2 = parseInt(document.getElementById('frac2-den').value || 0);
+            
+            if (den1 === 0 || den2 === 0) {
+                document.getElementById('fraction-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Denominator cannot be zero';
+                animateResult('fraction-result', false);
+                addScore('fraction', 0, false);
+                return;
+            }
+            
+            let resultNum, resultDen;
+            let operationSymbol = '';
+            
+            switch(operation) {
+                case 'add':
+                    resultNum = num1 * den2 + num2 * den1;
+                    resultDen = den1 * den2;
+                    operationSymbol = '+';
+                    break;
+                case 'subtract':
+                    resultNum = num1 * den2 - num2 * den1;
+                    resultDen = den1 * den2;
+                    operationSymbol = '-';
+                    break;
+                case 'multiply':
+                    resultNum = num1 * num2;
+                    resultDen = den1 * den2;
+                    operationSymbol = '×';
+                    break;
+                case 'divide':
+                    if (num2 === 0) {
+                        document.getElementById('fraction-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Cannot divide by zero';
+                        animateResult('fraction-result', false);
+                        addScore('fraction', 0, false);
+                        return;
+                    }
+                    resultNum = num1 * den2;
+                    resultDen = den1 * num2;
+                    operationSymbol = '÷';
+                    break;
+            }
+            
+            const [simplifiedNum, simplifiedDen] = simplifyFraction(resultNum, resultDen);
+            const decimal = (simplifiedNum / simplifiedDen).toFixed(4);
+            
+            const basePoints = 8;
+            const levelBonus = level * 4;
+            const streakBonus = Math.min(gameState.fraction.streak * 2, 16);
+            const totalPoints = basePoints + levelBonus + streakBonus;
+            
+            document.getElementById('fraction-result').innerHTML = 
+                `<strong>Result:</strong><br>` +
+                `${num1}/${den1} ${operationSymbol} ${num2}/${den2} = ${simplifiedNum}/${simplifiedDen}<br>` +
+                `<strong>Decimal:</strong> ${decimal}<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('fraction-result', true);
+            addScore('fraction', totalPoints, true);
+        }
+
+        // Enhanced Decimal Functions
+        function calculateDecimals(operation) {
+            const level = gameState.decimal.level;
+            const num1 = parseFloat(document.getElementById('decimal1').value || 0);
+            const num2 = parseFloat(document.getElementById('decimal2').value || 0);
+            
+            let result;
+            let operationSymbol = '';
+            
+            switch(operation) {
+                case 'add':
+                    result = num1 + num2;
+                    operationSymbol = '+';
+                    break;
+                case 'subtract':
+                    result = num1 - num2;
+                    operationSymbol = '-';
+                    break;
+                case 'multiply':
+                    result = num1 * num2;
+                    operationSymbol = '×';
+                    break;
+                case 'divide':
+                    if (num2 === 0) {
+                        document.getElementById('decimal-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Cannot divide by zero';
+                        animateResult('decimal-result', false);
+                        addScore('decimal', 0, false);
+                        return;
+                    }
+                    result = num1 / num2;
+                    operationSymbol = '÷';
+                    break;
+            }
+            
+            const basePoints = 6;
+            const levelBonus = level * 3;
+            const streakBonus = Math.min(gameState.decimal.streak * 1, 12);
+            const totalPoints = basePoints + levelBonus + streakBonus;
+            
+            document.getElementById('decimal-result').innerHTML = 
+                `<strong>Result:</strong><br>` +
+                `${num1} ${operationSymbol} ${num2} = ${result.toFixed(6)}<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('decimal-result', true);
+            addScore('decimal', totalPoints, true);
+        }
+
+        function convertFractionDecimal() {
+            const level = gameState.decimal.level;
+            const input = document.getElementById('convert-input').value.trim();
+            
+            if (input.includes('/')) {
+                // Convert fraction to decimal
+                const parts = input.split('/');
+                if (parts.length !== 2) {
+                    document.getElementById('convert-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Invalid fraction format';
+                    animateResult('convert-result', false);
+                    addScore('decimal', 0, false);
+                    return;
+                }
+                
+                const num = parseFloat(parts[0]);
+                const den = parseFloat(parts[1]);
+                
+                if (den === 0) {
+                    document.getElementById('convert-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Denominator cannot be zero';
+                    animateResult('convert-result', false);
+                    addScore('decimal', 0, false);
+                    return;
+                }
+                
+                const decimal = num / den;
+                const basePoints = 8;
+                const totalPoints = basePoints + (level * 4);
+                
+                document.getElementById('convert-result').innerHTML = 
+                    `<strong>Decimal:</strong> ${decimal.toFixed(6)}<br>` +
+                    `<strong>Points:</strong> +${totalPoints}`;
+            } else {
+                // Convert decimal to fraction
+                const decimal = parseFloat(input);
+                if (isNaN(decimal)) {
+                    document.getElementById('convert-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Invalid number';
+                    animateResult('convert-result', false);
+                    addScore('decimal', 0, false);
+                    return;
+                }
+                
+                let denominator = 1;
+                let numerator = decimal;
+                
+                while (numerator % 1 !== 0) {
+                    numerator *= 10;
+                    denominator *= 10;
+                }
+                
+                const [simplifiedNum, simplifiedDen] = simplifyFraction(numerator, denominator);
+                const basePoints = 8;
+                const totalPoints = basePoints + (level * 4);
+                
+                document.getElementById('convert-result').innerHTML = 
+                    `<strong>Fraction:</strong> ${simplifiedNum}/${simplifiedDn}<br>` +
+                    `<strong>Points:</strong> +${totalPoints}`;
+            }
+            
+            animateResult('convert-result', true);
+            addScore('decimal', 8 + (level * 4), true);
+        }
+
+        // Enhanced Geometry Functions
+        function calculateRectangle() {
+            const level = gameState.geometry.level;
+            const length = parseFloat(document.getElementById('rect-length').value || 0);
+            const width = parseFloat(document.getElementById('rect-width').value || 0);
+            
+            if (length <= 0 || width <= 0) {
+                document.getElementById('rect-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Length and width must be positive';
+                animateResult('rect-result', false);
+                addScore('geometry', 0, false);
+                return;
+            }
+            
+            const area = length * width;
+            const perimeter = 2 * (length + width);
+            
+            const basePoints = 10;
+            const levelBonus = level * 5;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('rect-result').innerHTML = 
+                `<strong>Area:</strong> ${area.toFixed(2)} units²<br>` +
+                `<strong>Perimeter:</strong> ${perimeter.toFixed(2)} units<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('rect-result', true);
+            addScore('geometry', totalPoints, true);
+        }
+
+        function calculateCircle() {
+            const level = gameState.geometry.level;
+            const radius = parseFloat(document.getElementById('circle-radius').value || 0);
+            
+            if (radius <= 0) {
+                document.getElementById('circle-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Radius must be positive';
+                animateResult('circle-result', false);
+                addScore('geometry', 0, false);
+                return;
+            }
+            
+            const area = Math.PI * radius * radius;
+            const circumference = 2 * Math.PI * radius;
+            
+            const basePoints = 12;
+            const levelBonus = level * 6;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('circle-result').innerHTML = 
+                `<strong>Area:</strong> ${area.toFixed(2)} units²<br>` +
+                `<strong>Circumference:</strong> ${circumference.toFixed(2)} units<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('circle-result', true);
+            addScore('geometry', totalPoints, true);
+        }
+
+        function calculateTriangle() {
+            const level = gameState.geometry.level;
+            const base = parseFloat(document.getElementById('tri-base').value || 0);
+            const height = parseFloat(document.getElementById('tri-height').value || 0);
+            
+            if (base <= 0 || height <= 0) {
+                document.getElementById('triangle-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Base and height must be positive';
+                animateResult('triangle-result', false);
+                addScore('geometry', 0, false);
+                return;
+            }
+            
+            const area = 0.5 * base * height;
+            
+            const basePoints = 8;
+            const levelBonus = level * 4;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('triangle-result').innerHTML = 
+                `<strong>Area:</strong> ${area.toFixed(2)} units²<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('triangle-result', true);
+            addScore('geometry', totalPoints, true);
+        }
+
+        // Enhanced Volume Functions
+        function calculateCube() {
+            const level = gameState.volume.level;
+            const side = parseFloat(document.getElementById('cube-side').value || 0);
+            
+            if (side <= 0) {
+                document.getElementById('cube-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Side length must be positive';
+                animateResult('cube-result', false);
+                addScore('volume', 0, false);
+                return;
+            }
+            
+            const volume = side * side * side;
+            const surfaceArea = 6 * side * side;
+            
+            const basePoints = 12;
+            const levelBonus = level * 6;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('cube-result').innerHTML = 
+                `<strong>Volume:</strong> ${volume.toFixed(2)} units³<br>` +
+                `<strong>Surface Area:</strong> ${surfaceArea.toFixed(2)} units²<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('cube-result', true);
+            addScore('volume', totalPoints, true);
+        }
+
+        function calculateCylinder() {
+            const level = gameState.volume.level;
+            const radius = parseFloat(document.getElementById('cyl-radius').value || 0);
+            const height = parseFloat(document.getElementById('cyl-height').value || 0);
+            
+            if (radius <= 0 || height <= 0) {
+                document.getElementById('cyl-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Radius and height must be positive';
+                animateResult('cyl-result', false);
+                addScore('volume', 0, false);
+                return;
+            }
+            
+            const volume = Math.PI * radius * radius * height;
+            const surfaceArea = 2 * Math.PI * radius * (radius + height);
+            
+            const basePoints = 15;
+            const levelBonus = level * 7;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('cyl-result').innerHTML = 
+                `<strong>Volume:</strong> ${volume.toFixed(2)} units³<br>` +
+                `<strong>Surface Area:</strong> ${surfaceArea.toFixed(2)} units²<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('cyl-result', true);
+            addScore('volume', totalPoints, true);
+        }
+
+        function calculateSphere() {
+            const level = gameState.volume.level;
+            const radius = parseFloat(document.getElementById('sphere-radius').value || 0);
+            
+            if (radius <= 0) {
+                document.getElementById('sphere-result').innerHTML = '<strong style="color: #ff4444;">Error:</strong> Radius must be positive';
+                animateResult('sphere-result', false);
+                addScore('volume', 0, false);
+                return;
+            }
+            
+            const volume = (4/3) * Math.PI * radius * radius * radius;
+            const surfaceArea = 4 * Math.PI * radius * radius;
+            
+            const basePoints = 18;
+            const levelBonus = level * 9;
+            const totalPoints = basePoints + levelBonus;
+            
+            document.getElementById('sphere-result').innerHTML = 
+                `<strong>Volume:</strong> ${volume.toFixed(2)} units³<br>` +
+                `<strong>Surface Area:</strong> ${surfaceArea.toFixed(2)} units²<br>` +
+                `<strong>Points:</strong> +${totalPoints}`;
+            
+            animateResult('sphere-result', true);
+            addScore('volume', totalPoints, true);
+        }
+
+        // Initialize
+        Object.keys(gameState).forEach(category => {
+            updateStats(category);
+        });
+        updateProgress();
+
+        // Enhanced input animations
+        document.querySelectorAll('.input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.boxShadow = '0 0 20px rgba(0,255,0,0.2)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Enhanced button animations
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.02)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
