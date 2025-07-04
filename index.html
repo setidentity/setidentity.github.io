@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
@@ -116,11 +116,17 @@
             background: #c0392b;
         }
 
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
         .session-controls {
             display: flex;
             gap: 0.5rem;
             justify-content: center;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
 
         .session-controls .btn {
@@ -198,32 +204,129 @@
             padding: 1.5rem;
         }
 
-        .audio-player {
+        .user-card {
             background: #2a2a2a;
-            border-radius: 8px;
+            border: 1px solid #444;
+            border-radius: 10px;
             padding: 1rem;
             margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .audio-player:last-child {
+        .user-card:last-child {
             margin-bottom: 0;
         }
 
-        .player-header {
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff, #6c5ce7);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
         }
 
-        .user-id {
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
             font-weight: 500;
             color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-status {
+            color: #888;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .owner-badge {
+            background: #f39c12;
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .voice-meter {
+            width: 60px;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-right: 0.5rem;
+        }
+
+        .voice-level {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+            width: 0%;
+            transition: width 0.1s ease;
+            border-radius: 3px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: #444;
+            border: none;
+            border-radius: 6px;
+            padding: 0.4rem 0.6rem;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: #555;
+        }
+
+        .control-btn.active {
+            background: #4a9eff;
+        }
+
+        .control-btn.danger {
+            background: #e74c3c;
+        }
+
+        .control-btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .screen-share {
+            width: 100%;
+            max-width: 400px;
+            background: #000;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
         .audio-controls audio {
-            width: 100%;
-            margin-top: 0.5rem;
+            flex: 1;
+            height: 30px;
         }
 
         .empty-state {
@@ -270,6 +373,15 @@
             display: none !important;
         }
 
+        .muted {
+            opacity: 0.6;
+        }
+
+        .banned {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
         @media (max-width: 640px) {
             .input-row {
                 flex-direction: column;
@@ -283,6 +395,16 @@
             .title {
                 font-size: 2rem;
             }
+
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
         }
     </style>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -291,7 +413,7 @@
     <div class="container">
         <div class="header">
             <h1 class="title">Voice Chat</h1>
-            <p class="subtitle">Simple voice rooms for everyone</p>
+            <p class="subtitle">Join existing voice rooms</p>
         </div>
 
         <div class="main-controls">
@@ -304,12 +426,14 @@
                     maxlength="8"
                 />
                 <button class="btn btn-primary" onclick="joinRoom()">Join</button>
-                <button class="btn btn-secondary" onclick="createRoom()">New Room</button>
+                <button class="btn btn-secondary" onclick="createRoom()">Join Only</button>
             </div>
             
             <div class="session-controls hidden" id="sessionControls">
                 <button class="btn btn-secondary" id="muteBtn" onclick="toggleMute()">Mute</button>
+                <button class="btn btn-secondary" id="shareBtn" onclick="toggleScreenShare()">Share Screen</button>
                 <button class="btn btn-danger" onclick="leaveRoom()">Leave</button>
+                <button class="btn btn-danger hidden" id="closeRoomBtn" onclick="closeRoom()">Close Room</button>
             </div>
         </div>
 
@@ -331,22 +455,28 @@
         </div>
 
         <div class="connections-section">
-            <h2 class="section-title">Voice Connections</h2>
-            <div id="audioContainer">
+            <h2 class="section-title">Room Participants</h2>
+            <div id="usersContainer">
                 <div class="empty-state">
-                    No active connections
+                    No participants yet
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple voice chat app
+        // Voice chat with advanced controls
         const roomsURL = 'https://api.jsonbin.io/v3/b/665f96d9acd3cb34a845123b'; // Replace with your API
-        let peer, localStream;
+        let peer, localStream, screenStream;
         let currentRoom = null;
+        let isOwner = false;
         let isMuted = false;
+        let isScreenSharing = false;
         let connections = new Map();
+        let users = new Map();
+        let bannedUsers = new Set();
+        let mutedUsers = new Set();
+        let audioContext, analyser;
 
         // Show a message to the user
         function showMessage(text, type = 'success') {
@@ -368,6 +498,141 @@
             statusBar.classList.remove('hidden');
             statusDot.className = `status-dot status-${status}`;
             statusText.textContent = text;
+        }
+
+        // Get user initials for avatar
+        function getUserInitials(peerId) {
+            return peerId.substring(0, 2).toUpperCase();
+        }
+
+        // Setup audio analysis for voice meter
+        function setupAudioAnalysis(stream) {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 256;
+                
+                monitorAudioLevel();
+            } catch (error) {
+                console.log('Audio analysis not supported');
+            }
+        }
+
+        // Monitor audio level for voice meter
+        function monitorAudioLevel() {
+            if (!analyser) return;
+            
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+            
+            const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+            const level = Math.min(100, (average / 128) * 100);
+            
+            updateVoiceMeter(peer.id, level);
+            requestAnimationFrame(monitorAudioLevel);
+        }
+
+        // Update voice meter display
+        function updateVoiceMeter(peerId, level) {
+            const userCard = document.getElementById(`user-${peerId}`);
+            if (userCard) {
+                const voiceLevel = userCard.querySelector('.voice-level');
+                if (voiceLevel) {
+                    voiceLevel.style.width = `${level}%`;
+                }
+            }
+        }
+
+        // Create user card
+        function createUserCard(peerId, isCurrentUser = false) {
+            const userCard = document.createElement('div');
+            userCard.className = 'user-card';
+            userCard.id = `user-${peerId}`;
+            
+            const isUserOwner = isCurrentUser && isOwner;
+            
+            userCard.innerHTML = `
+                <div class="user-avatar">${getUserInitials(peerId)}</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        ${isCurrentUser ? 'You' : `User ${peerId.substring(0, 6)}`}
+                        ${isUserOwner ? '<span class="owner-badge">OWNER</span>' : ''}
+                    </div>
+                    <div class="user-status">
+                        <div class="voice-meter">
+                            <div class="voice-level"></div>
+                        </div>
+                        <span class="connection-status">Connected</span>
+                    </div>
+                </div>
+                <div class="user-controls">
+                    ${isCurrentUser ? `
+                        <button class="control-btn" onclick="toggleScreenShare()">
+                            ${isScreenSharing ? 'Stop Share' : 'Share Screen'}
+                        </button>
+                    ` : ''}
+                    ${isOwner && !isCurrentUser ? `
+                        <button class="control-btn" onclick="muteUser('${peerId}')">
+                            ${mutedUsers.has(peerId) ? 'Unmute' : 'Mute'}
+                        </button>
+                        <button class="control-btn danger" onclick="kickUser('${peerId}')">Kick</button>
+                        <button class="control-btn danger" onclick="banUser('${peerId}')">Ban</button>
+                    ` : ''}
+                </div>
+            `;
+            
+            return userCard;
+        }
+
+        // Update users display
+        function updateUsersDisplay() {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '';
+            
+            if (users.size === 0) {
+                container.innerHTML = '<div class="empty-state">No participants yet</div>';
+                return;
+            }
+            
+            // Add current user first
+            if (peer && peer.id) {
+                const currentUserCard = createUserCard(peer.id, true);
+                container.appendChild(currentUserCard);
+            }
+            
+            // Add other users
+            users.forEach((userData, peerId) => {
+                if (peerId !== peer.id) {
+                    const userCard = createUserCard(peerId);
+                    if (mutedUsers.has(peerId)) {
+                        userCard.classList.add('muted');
+                    }
+                    if (bannedUsers.has(peerId)) {
+                        userCard.classList.add('banned');
+                    }
+                    container.appendChild(userCard);
+                    
+                    // Add audio element if exists
+                    if (userData.stream) {
+                        const audio = document.createElement('audio');
+                        audio.srcObject = userData.stream;
+                        audio.autoplay = true;
+                        audio.muted = mutedUsers.has(peerId);
+                        userCard.appendChild(audio);
+                    }
+                    
+                    // Add screen share if exists
+                    if (userData.screenStream) {
+                        const video = document.createElement('video');
+                        video.srcObject = userData.screenStream;
+                        video.autoplay = true;
+                        video.className = 'screen-share';
+                        userCard.appendChild(video);
+                    }
+                }
+            });
         }
 
         // Load and display available rooms
@@ -413,9 +678,14 @@
             });
             
             peer.on('call', call => {
+                if (bannedUsers.has(call.peer)) {
+                    call.close();
+                    return;
+                }
+                
                 call.answer(localStream);
                 call.on('stream', stream => {
-                    addAudioConnection(stream, call.peer);
+                    addUser(call.peer, stream);
                 });
             });
             
@@ -425,57 +695,111 @@
             });
         }
 
-        // Add an audio connection
-        function addAudioConnection(stream, peerId) {
-            const container = document.getElementById('audioContainer');
+        // Add user to the room
+        function addUser(peerId, stream, screenStream = null) {
+            users.set(peerId, { stream, screenStream });
+            updateUsersDisplay();
+        }
+
+        // Remove user from the room
+        function removeUser(peerId) {
+            users.delete(peerId);
+            updateUsersDisplay();
+        }
+
+        // Mute/unmute user (owner only)
+        function muteUser(peerId) {
+            if (!isOwner) return;
             
-            // Clear empty state
-            const emptyState = container.querySelector('.empty-state');
-            if (emptyState) emptyState.remove();
+            if (mutedUsers.has(peerId)) {
+                mutedUsers.delete(peerId);
+                showMessage(`User ${peerId.substring(0, 6)} unmuted`);
+            } else {
+                mutedUsers.add(peerId);
+                showMessage(`User ${peerId.substring(0, 6)} muted`);
+            }
             
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'audio-player';
-            playerDiv.id = `player-${peerId}`;
+            updateUsersDisplay();
+        }
+
+        // Kick user (owner only)
+        function kickUser(peerId) {
+            if (!isOwner) return;
             
-            const audio = document.createElement('audio');
-            audio.srcObject = stream;
-            audio.autoplay = true;
-            audio.controls = true;
+            const connection = connections.get(peerId);
+            if (connection) {
+                connection.close();
+                connections.delete(peerId);
+            }
             
-            playerDiv.innerHTML = `
-                <div class="player-header">
-                    <div class="user-id">User ${peerId.substring(0, 6)}</div>
-                </div>
-                <div class="audio-controls"></div>
-            `;
+            removeUser(peerId);
+            showMessage(`User ${peerId.substring(0, 6)} kicked`);
+        }
+
+        // Ban user (owner only)
+        function banUser(peerId) {
+            if (!isOwner) return;
             
-            playerDiv.querySelector('.audio-controls').appendChild(audio);
-            container.appendChild(playerDiv);
+            bannedUsers.add(peerId);
+            kickUser(peerId);
+            showMessage(`User ${peerId.substring(0, 6)} banned`);
+        }
+
+        // Toggle screen sharing
+        async function toggleScreenShare() {
+            if (!isScreenSharing) {
+                try {
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    isScreenSharing = true;
+                    
+                    // Update button text
+                    const shareBtn = document.getElementById('shareBtn');
+                    shareBtn.textContent = 'Stop Share';
+                    
+                    // Share with all connected peers
+                    connections.forEach(call => {
+                        const newCall = peer.call(call.peer, screenStream);
+                        newCall.on('stream', stream => {
+                            const userData = users.get(call.peer);
+                            if (userData) {
+                                userData.screenStream = stream;
+                                updateUsersDisplay();
+                            }
+                        });
+                    });
+                    
+                    showMessage('Screen sharing started');
+                    
+                    screenStream.getVideoTracks()[0].onended = () => {
+                        stopScreenShare();
+                    };
+                    
+                } catch (error) {
+                    showMessage('Screen sharing failed', 'error');
+                }
+            } else {
+                stopScreenShare();
+            }
+        }
+
+        // Stop screen sharing
+        function stopScreenShare() {
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
+            }
             
-            connections.set(peerId, playerDiv);
+            isScreenSharing = false;
+            const shareBtn = document.getElementById('shareBtn');
+            shareBtn.textContent = 'Share Screen';
+            
+            showMessage('Screen sharing stopped');
+            updateUsersDisplay();
         }
 
         // Create a new room
         function createRoom() {
-            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-            currentRoom = code;
-            
-            updateStatus('connecting', 'Creating room...');
-            
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    localStream = stream;
-                    setupPeer(id => {
-                        updateRoomData(code, [id]);
-                        showMessage(`Room ${code} created`);
-                        showSessionControls();
-                        document.getElementById('roomCode').value = code;
-                    });
-                })
-                .catch(error => {
-                    showMessage('Microphone access needed', 'error');
-                    updateStatus('offline', 'Microphone access denied');
-                });
+            showMessage('Enter a room code to join an existing room', 'error');
         }
 
         // Join an existing room
@@ -490,29 +814,42 @@
             currentRoom = code;
             updateStatus('connecting', 'Joining room...');
             
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    localStream = stream;
-                    setupPeer(id => {
-                        // Get existing room data and add ourselves
-                        fetch(roomsURL, {
-                            headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            const rooms = data.record || {};
+            // First check if room exists
+            fetch(roomsURL, {
+                headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const rooms = data.record || {};
+                if (!rooms[code]) {
+                    showMessage(`Room ${code} does not exist`, 'error');
+                    updateStatus('offline', 'Room not found');
+                    return;
+                }
+                
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        localStream = stream;
+                        setupAudioAnalysis(stream);
+                        
+                        setupPeer(id => {
                             const peers = rooms[code] || [];
+                            isOwner = peers.length === 0; // First person becomes owner
                             
                             peers.push(id);
                             updateRoomData(code, peers);
+                            
+                            // Add self to users
+                            addUser(id, stream);
                             
                             // Connect to existing peers
                             peers.forEach(peerId => {
                                 if (peerId !== id) {
                                     const call = peer.call(peerId, localStream);
                                     if (call) {
+                                        connections.set(peerId, call);
                                         call.on('stream', stream => {
-                                            addAudioConnection(stream, peerId);
+                                            addUser(peerId, stream);
                                         });
                                     }
                                 }
@@ -520,13 +857,22 @@
                             
                             showMessage(`Joined room ${code}`);
                             showSessionControls();
+                            
+                            if (isOwner) {
+                                document.getElementById('closeRoomBtn').classList.remove('hidden');
+                                showMessage('You are the room owner', 'success');
+                            }
                         });
+                    })
+                    .catch(error => {
+                        showMessage('Microphone access needed', 'error');
+                        updateStatus('offline', 'Microphone access denied');
                     });
-                })
-                .catch(error => {
-                    showMessage('Microphone access needed', 'error');
-                    updateStatus('offline', 'Microphone access denied');
-                });
+            })
+            .catch(error => {
+                showMessage('Could not connect to room', 'error');
+                updateStatus('offline', 'Connection failed');
+            });
         }
 
         // Update room data on server
@@ -567,24 +913,55 @@
             }
         }
 
+        // Close room (owner only)
+        function closeRoom() {
+            if (!isOwner) return;
+            
+            // Close all connections
+            connections.forEach(call => call.close());
+            
+            // Clear room data
+            const roomData = {};
+            fetch(roomsURL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': '$2b$10$1234567890123456789012'
+                },
+                body: JSON.stringify(roomData)
+            });
+            
+            showMessage('Room closed');
+            leaveRoom();
+        }
+
         // Leave current room
         function leaveRoom() {
             if (peer) peer.destroy();
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
             }
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+            }
             
-            // Clear connections
-            document.getElementById('audioContainer').innerHTML = '<div class="empty-state">No active connections</div>';
+            // Clear all data
             connections.clear();
+            users.clear();
+            bannedUsers.clear();
+            mutedUsers.clear();
             
-            // Hide controls
+            // Reset UI
+            document.getElementById('usersContainer').innerHTML = '<div class="empty-state">No participants yet</div>';
             document.getElementById('sessionControls').classList.add('hidden');
             document.getElementById('statusBar').classList.add('hidden');
+            document.getElementById('closeRoomBtn').classList.add('hidden');
             
             // Reset state
             currentRoom = null;
+            isOwner = false;
             isMuted = false;
+            isScreenSharing = false;
             
             showMessage('Left room');
             loadRooms();
@@ -593,7 +970,7 @@
         // Initialize the app
         function init() {
             loadRooms();
-            setInterval(loadRooms, 5000); // Refresh rooms every 8 seconds
+            setInterval(loadRooms, 8000); // Refresh rooms every 8 seconds
             
             // Enter key support
             document.getElementById('roomCode').addEventListener('keypress', function(e) {
