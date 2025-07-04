@@ -1,1178 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Chat</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0d0d0d;
-            color: #e8e8e8;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: #888;
-            font-size: 1.1rem;
-            font-weight: 400;
-        }
-
-        .main-controls {
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid #333;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .room-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .room-input:focus {
-            border-color: #666;
-            background: #333;
-        }
-
-        .room-input::placeholder {
-            color: #777;
-        }
-
-        .btn {
-            padding: 0.75rem 1.25rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .btn-primary {
-            background: #4a9eff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #3d8ce6;
-        }
-
-        .btn-secondary {
-            background: #555;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #666;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #219a52;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .btn-small {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
-        }
-
-        .session-controls {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .session-controls .btn {
-            font-size: 0.9rem;
-            padding: 0.6rem 1rem;
-        }
-
-        .status-bar {
-            text-align: center;
-            padding: 0.75rem;
-            background: #252525;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-
-        .status-online { background: #27ae60; }
-        .status-connecting { background: #f39c12; }
-        .status-offline { background: #e74c3c; }
-
-        .rooms-section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-
-        .rooms-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .room-card {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .room-card:hover {
-            background: #222;
-            border-color: #555;
-        }
-
-        .room-name {
-            font-weight: 500;
-            color: #fff;
-            margin-bottom: 0.25rem;
-        }
-
-        .room-count {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .connections-section {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .user-card {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4a9eff, #6c5ce7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 500;
-            color: #fff;
-            margin-bottom: 0.25rem;
-        }
-
-        .user-status {
-            color: #888;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .owner-badge {
-            background: #f39c12;
-            color: white;
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .voice-meter {
-            width: 60px;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-right: 0.5rem;
-        }
-
-        .voice-level {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
-            width: 0%;
-            transition: width 0.1s ease;
-            border-radius: 3px;
-        }
-
-        .user-controls {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .control-btn {
-            background: #444;
-            border: none;
-            border-radius: 6px;
-            padding: 0.4rem 0.6rem;
-            color: #fff;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
-        }
-
-        .control-btn:hover {
-            background: #555;
-        }
-
-        .control-btn.active {
-            background: #4a9eff;
-        }
-
-        .control-btn.danger {
-            background: #e74c3c;
-        }
-
-        .control-btn.danger:hover {
-            background: #c0392b;
-        }
-
-        .screen-share {
-            width: 100%;
-            max-width: 400px;
-            background: #000;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-        }
-
-        .audio-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .audio-controls audio {
-            flex: 1;
-            height: 30px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #666;
-            padding: 2rem;
-        }
-
-        .message {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .message-success {
-            background: rgba(39, 174, 96, 0.1);
-            border: 1px solid rgba(39, 174, 96, 0.3);
-            color: #27ae60;
-        }
-
-        .message-error {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #333;
-            border-radius: 50%;
-            border-top-color: #4a9eff;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .muted {
-            opacity: 0.6;
-        }
-
-        .banned {
-            background: rgba(231, 76, 60, 0.1);
-            border-color: rgba(231, 76, 60, 0.3);
-        }
-
-        .room-code-display {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .room-code-display h3 {
-            color: #4a9eff;
-            margin-bottom: 0.5rem;
-        }
-
-        .room-code-display .code {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: 0.2rem;
-        }
-
-        @media (max-width: 640px) {
-            .input-row {
-                flex-direction: column;
-            }
-            
-            .session-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .title {
-                font-size: 2rem;
-            }
-
-            .user-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .user-controls {
-                width: 100%;
-                justify-content: flex-start;
-            }
-        }
-    </style>
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Black Themed Link Cleaner</title>
+<style>
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  input[type="text"] {
+    width: 90vw;
+    max-width: 600px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background-color: #222;
+    color: #eee;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 8px #0f0;
+    transition: box-shadow 0.3s ease;
+  }
+  input[type="text"]:focus {
+    box-shadow: 0 0 12px #0f0;
+  }
+  button {
+    padding: 0.7rem 2rem;
+    background-color: #0f0;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+  }
+  button:hover {
+    background-color: #0a0;
+  }
+  #result {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    word-break: break-all;
+    background-color: #222;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    user-select: none;
+    cursor: pointer;
+    color: #0f0;
+    box-shadow: 0 0 8px #0f0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  #result.copied {
+    background-color: #0f0;
+    color: #000;
+    box-shadow: 0 0 12px #0a0;
+  }
+  small {
+    margin-top: 1rem;
+    color: #666;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Voice Chat</h1>
-            <p class="subtitle">Create or join voice rooms</p>
-        </div>
+<h1>fake link generator</h1>
+<input id="inputLink" type="text" placeholder="paste link here" />
+<button onclick="processLink()">Clean Link</button>
+<div id="result" title="Click to copy" style="display:none;"></div>
+<small>example:<br/>https://www.robiox.com.tg/communities/123456789/example</small>
 
-        <div class="main-controls">
-            <div class="input-row">
-                <input 
-                    type="text" 
-                    id="roomCode" 
-                    class="room-input" 
-                    placeholder="Enter room code to join..."
-                    maxlength="8"
-                />
-                <button class="btn btn-primary" onclick="joinRoom()">Join Room</button>
-                <button class="btn btn-success" onclick="createRoom()">Create Room</button>
-            </div>
-            
-            <div class="session-controls hidden" id="sessionControls">
-                <button class="btn btn-secondary" id="muteBtn" onclick="toggleMute()">Mute</button>
-                <button class="btn btn-secondary" id="shareBtn" onclick="toggleScreenShare()">Share Screen</button>
-                <button class="btn btn-danger" onclick="leaveRoom()">Leave</button>
-                <button class="btn btn-danger hidden" id="closeRoomBtn" onclick="closeRoom()">Close Room</button>
-            </div>
-        </div>
+<script>
+  const resultDiv = document.getElementById('result');
 
-        <div class="room-code-display hidden" id="roomCodeDisplay">
-            <h3>Room Code</h3>
-            <div class="code" id="displayedRoomCode"></div>
-            <p style="color: #888; margin-top: 0.5rem;">Share this code with others to join</p>
-        </div>
+  function processLink() {
+    const input = document.getElementById('inputLink').value.trim();
 
-        <div class="status-bar hidden" id="statusBar">
-            <span class="status-dot status-offline" id="statusDot"></span>
-            <span id="statusText">Disconnected</span>
-        </div>
+    if (!input) {
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = "Please enter a link.";
+      resultDiv.classList.remove('copied');
+      return;
+    }
 
-        <div id="messageContainer"></div>
+    // Validate URL format
+    try {
+      new URL(input);
+    } catch {
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = "Invalid URL format.";
+      resultDiv.classList.remove('copied');
+      return;
+    }
 
-        <div class="rooms-section">
-            <h2 class="section-title">Active Rooms</h2>
-            <div class="rooms-list" id="roomsList">
-                <div class="empty-state">
-                    <div class="loading"></div>
-                    Looking for rooms...
-                </div>
-            </div>
-        </div>
+    let displayUrl = input;
+    displayUrl = displayUrl.replace('://', '**:**//'); // replace scheme colon
+    displayUrl = displayUrl.replace('www.robiox.com.tg', 'www.roblox.com');
 
-        <div class="connections-section">
-            <h2 class="section-title">Room Participants</h2>
-            <div id="usersContainer">
-                <div class="empty-state">
-                    No participants yet
-                </div>
-            </div>
-        </div>
-    </div>
+    // Markdown style [display](original)
+    const markdownLink = `[${displayUrl}](${input})`;
 
-    <script>
-        // Voice chat with advanced controls
-        const roomsURL = 'https://api.jsonbin.io/v3/b/665f96d9acd3cb34a845123b'; // Replace with your API
-        let peer, localStream, screenStream;
-        let currentRoom = null;
-        let isOwner = false;
-        let isMuted = false;
-        let isScreenSharing = false;
-        let connections = new Map();
-        let users = new Map();
-        let bannedUsers = new Set();
-        let mutedUsers = new Set();
-        let audioContext, analyser;
+    resultDiv.style.display = 'block';
+    resultDiv.textContent = markdownLink;
+    resultDiv.classList.remove('copied');
+  }
 
-        // Generate random room code
-        function generateRoomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
+  // Copy on click
+  resultDiv.addEventListener('click', () => {
+    if (!resultDiv.textContent || resultDiv.textContent === "Please enter a link." || resultDiv.textContent === "Invalid URL format.") {
+      return; // nothing to copy or error message
+    }
 
-        // Show a message to the user
-        function showMessage(text, type = 'success') {
-            const container = document.getElementById('messageContainer');
-            const message = document.createElement('div');
-            message.className = `message message-${type}`;
-            message.textContent = text;
-            container.appendChild(message);
-            
-            setTimeout(() => message.remove(), 4000);
-        }
+    navigator.clipboard.writeText(resultDiv.textContent)
+      .then(() => {
+        resultDiv.classList.add('copied');
+        resultDiv.textContent = "copied";
 
-        // Update the connection status
-        function updateStatus(status, text) {
-            const statusBar = document.getElementById('statusBar');
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('statusText');
-            
-            statusBar.classList.remove('hidden');
-            statusDot.className = `status-dot status-${status}`;
-            statusText.textContent = text;
-        }
-
-        // Show room code display
-        function showRoomCode(code) {
-            const roomCodeDisplay = document.getElementById('roomCodeDisplay');
-            const displayedRoomCode = document.getElementById('displayedRoomCode');
-            
-            displayedRoomCode.textContent = code;
-            roomCodeDisplay.classList.remove('hidden');
-        }
-
-        // Hide room code display
-        function hideRoomCode() {
-            const roomCodeDisplay = document.getElementById('roomCodeDisplay');
-            roomCodeDisplay.classList.add('hidden');
-        }
-
-        // Get user initials for avatar
-        function getUserInitials(peerId) {
-            return peerId.substring(0, 2).toUpperCase();
-        }
-
-        // Setup audio analysis for voice meter
-        function setupAudioAnalysis(stream) {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                const source = audioContext.createMediaStreamSource(stream);
-                source.connect(analyser);
-                analyser.fftSize = 256;
-                
-                monitorAudioLevel();
-            } catch (error) {
-                console.log('Audio analysis not supported');
-            }
-        }
-
-        // Monitor audio level for voice meter
-        function monitorAudioLevel() {
-            if (!analyser) return;
-            
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            analyser.getByteFrequencyData(dataArray);
-            
-            const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
-            const level = Math.min(100, (average / 128) * 100);
-            
-            updateVoiceMeter(peer.id, level);
-            requestAnimationFrame(monitorAudioLevel);
-        }
-
-        // Update voice meter display
-        function updateVoiceMeter(peerId, level) {
-            const userCard = document.getElementById(`user-${peerId}`);
-            if (userCard) {
-                const voiceLevel = userCard.querySelector('.voice-level');
-                if (voiceLevel) {
-                    voiceLevel.style.width = `${level}%`;
-                }
-            }
-        }
-
-        // Create user card
-        function createUserCard(peerId, isCurrentUser = false) {
-            const userCard = document.createElement('div');
-            userCard.className = 'user-card';
-            userCard.id = `user-${peerId}`;
-            
-            const isUserOwner = isCurrentUser && isOwner;
-            
-            userCard.innerHTML = `
-                <div class="user-avatar">${getUserInitials(peerId)}</div>
-                <div class="user-info">
-                    <div class="user-name">
-                        ${isCurrentUser ? 'You' : `User ${peerId.substring(0, 6)}`}
-                        ${isUserOwner ? '<span class="owner-badge">OWNER</span>' : ''}
-                    </div>
-                    <div class="user-status">
-                        <div class="voice-meter">
-                            <div class="voice-level"></div>
-                        </div>
-                        <span class="connection-status">Connected</span>
-                    </div>
-                </div>
-                <div class="user-controls">
-                    ${isCurrentUser ? `
-                        <button class="control-btn" onclick="toggleScreenShare()">
-                            ${isScreenSharing ? 'Stop Share' : 'Share Screen'}
-                        </button>
-                    ` : ''}
-                    ${isOwner && !isCurrentUser ? `
-                        <button class="control-btn" onclick="muteUser('${peerId}')">
-                            ${mutedUsers.has(peerId) ? 'Unmute' : 'Mute'}
-                        </button>
-                        <button class="control-btn danger" onclick="kickUser('${peerId}')">Kick</button>
-                        <button class="control-btn danger" onclick="banUser('${peerId}')">Ban</button>
-                    ` : ''}
-                </div>
-            `;
-            
-            return userCard;
-        }
-
-        // Update users display
-        function updateUsersDisplay() {
-            const container = document.getElementById('usersContainer');
-            container.innerHTML = '';
-            
-            if (users.size === 0) {
-                container.innerHTML = '<div class="empty-state">No participants yet</div>';
-                return;
-            }
-            
-            // Add current user first
-            if (peer && peer.id) {
-                const currentUserCard = createUserCard(peer.id, true);
-                container.appendChild(currentUserCard);
-            }
-            
-            // Add other users
-            users.forEach((userData, peerId) => {
-                if (peerId !== peer.id) {
-                    const userCard = createUserCard(peerId);
-                    if (mutedUsers.has(peerId)) {
-                        userCard.classList.add('muted');
-                    }
-                    if (bannedUsers.has(peerId)) {
-                        userCard.classList.add('banned');
-                    }
-                    container.appendChild(userCard);
-                    
-                    // Add audio element if exists
-                    if (userData.stream) {
-                        const audio = document.createElement('audio');
-                        audio.srcObject = userData.stream;
-                        audio.autoplay = true;
-                        audio.muted = mutedUsers.has(peerId);
-                        userCard.appendChild(audio);
-                    }
-                    
-                    // Add screen share if exists
-                    if (userData.screenStream) {
-                        const video = document.createElement('video');
-                        video.srcObject = userData.screenStream;
-                        video.autoplay = true;
-                        video.className = 'screen-share';
-                        userCard.appendChild(video);
-                    }
-                }
-            });
-        }
-
-        // Load and display available rooms
-        async function loadRooms() {
-            try {
-                const response = await fetch(roomsURL, {
-                    headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-                });
-                const data = await response.json();
-                const rooms = data.record || {};
-                
-                const roomsList = document.getElementById('roomsList');
-                roomsList.innerHTML = '';
-                
-                if (Object.keys(rooms).length === 0) {
-                    roomsList.innerHTML = '<div class="empty-state">No rooms available. Create one to get started!</div>';
-                    return;
-                }
-                
-                Object.entries(rooms).forEach(([code, peers]) => {
-                    const card = document.createElement('div');
-                    card.className = 'room-card';
-                    card.innerHTML = `
-                        <div class="room-name">${code}</div>
-                        <div class="room-count">${peers.length} connected</div>
-                    `;
-                    card.onclick = () => joinRoom(code);
-                    roomsList.appendChild(card);
-                });
-                
-            } catch (error) {
-                showMessage('Could not load rooms', 'error');
-            }
-        }
-
-        // Set up peer connection
-        function setupPeer(callback) {
-            peer = new Peer();
-            
-            peer.on('open', id => {
-                updateStatus('online', 'Connected');
-                callback(id);
-            });
-            
-            peer.on('call', call => {
-                if (bannedUsers.has(call.peer)) {
-                    call.close();
-                    return;
-                }
-                
-                call.answer(localStream);
-                call.on('stream', stream => {
-                    addUser(call.peer, stream);
-                });
-            });
-            
-            peer.on('error', error => {
-                showMessage('Connection failed', 'error');
-                updateStatus('offline', 'Connection failed');
-            });
-        }
-
-        // Add user to the room
-        function addUser(peerId, stream, screenStream = null) {
-            users.set(peerId, { stream, screenStream });
-            updateUsersDisplay();
-        }
-
-        // Remove user from the room
-        function removeUser(peerId) {
-            users.delete(peerId);
-            updateUsersDisplay();
-        }
-
-        // Mute/unmute user (owner only)
-        function muteUser(peerId) {
-            if (!isOwner) return;
-            
-            if (mutedUsers.has(peerId)) {
-                mutedUsers.delete(peerId);
-                showMessage(`User ${peerId.substring(0, 6)} unmuted`);
-            } else {
-                mutedUsers.add(peerId);
-                showMessage(`User ${peerId.substring(0, 6)} muted`);
-            }
-            
-            updateUsersDisplay();
-        }
-
-        // Kick user (owner only)
-        function kickUser(peerId) {
-            if (!isOwner) return;
-            
-            const connection = connections.get(peerId);
-            if (connection) {
-                connection.close();
-                connections.delete(peerId);
-            }
-            
-            removeUser(peerId);
-            showMessage(`User ${peerId.substring(0, 6)} kicked`);
-        }
-
-        // Ban user (owner only)
-        function banUser(peerId) {
-            if (!isOwner) return;
-            
-            bannedUsers.add(peerId);
-            kickUser(peerId);
-            showMessage(`User ${peerId.substring(0, 6)} banned`);
-        }
-
-        // Toggle screen sharing
-        async function toggleScreenShare() {
-            if (!isScreenSharing) {
-                try {
-                    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                    isScreenSharing = true;
-                    
-                    // Update button text
-                    const shareBtn = document.getElementById('shareBtn');
-                    shareBtn.textContent = 'Stop Share';
-                    
-                    // Share with all connected peers
-                    connections.forEach(call => {
-                        const newCall = peer.call(call.peer, screenStream);
-                        newCall.on('stream', stream => {
-                            const userData = users.get(call.peer);
-                            if (userData) {
-                                userData.screenStream = stream;
-                                updateUsersDisplay();
-                            }
-                        });
-                    });
-                    
-                    showMessage('Screen sharing started');
-                    
-                    screenStream.getVideoTracks()[0].onended = () => {
-                        stopScreenShare();
-                    };
-                    
-                } catch (error) {
-                    showMessage('Screen sharing failed', 'error');
-                }
-            } else {
-                stopScreenShare();
-            }
-        }
-
-        // Stop screen sharing
-        function stopScreenShare() {
-            if (screenStream) {
-                screenStream.getTracks().forEach(track => track.stop());
-                screenStream = null;
-            }
-            
-            isScreenSharing = false;
-            const shareBtn = document.getElementById('shareBtn');
-            shareBtn.textContent = 'Share Screen';
-            
-            showMessage('Screen sharing stopped');
-            updateUsersDisplay();
-        }
-
-        // Create a new room
-        async function createRoom() {
-            const roomCode = generateRoomCode();
-            
-            try {
-                // Get microphone access first
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                localStream = stream;
-                setupAudioAnalysis(stream);
-                
-                currentRoom = roomCode;
-                isOwner = true;
-                updateStatus('connecting', 'Creating room...');
-                
-                setupPeer(async id => {
-                    try {
-                        // Create room with current user as first member
-                        const roomData = { [roomCode]: [id] };
-                        
-                        const response = await fetch(roomsURL, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Master-Key': '$2b$10$1234567890123456789012'
-                            },
-                            body: JSON.stringify(roomData)
-                        });
-                        
-                        if (response.ok) {
-                            addUser(id, stream);
-                            showMessage(`Room ${roomCode} created successfully!`);
-                            showRoomCode(roomCode);
-                            showSessionControls();
-                            document.getElementById('closeRoomBtn').classList.remove('hidden');
-                            loadRooms();
-                        } else {
-                            throw new Error('Failed to create room');
-                        }
-                    } catch (error) {
-                        showMessage('Could not create room', 'error');
-                        updateStatus('offline', 'Room creation failed');
-                    }
-                });
-                
-            } catch (error) {
-                showMessage('Microphone access needed to create room', 'error');
-                updateStatus('offline', 'Microphone access denied');
-            }
-        }
-
-        // Join an existing room
-        function joinRoom(roomCode) {
-            const code = roomCode || document.getElementById('roomCode').value.trim().toUpperCase();
-            
-            if (!code) {
-                showMessage('Please enter a room code', 'error');
-                return;
-            }
-            
-            currentRoom = code;
-            updateStatus('connecting', 'Joining room...');
-            
-            // First check if room exists
-            fetch(roomsURL, {
-                headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-            })
-            .then(res => res.json())
-            .then(data => {
-                const rooms = data.record || {};
-                if (!rooms[code]) {
-                    showMessage(`Room ${code} does not exist`, 'error');
-                    updateStatus('offline', 'Room not found');
-                    return;
-                }
-                
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(stream => {
-                        localStream = stream;
-                        setupAudioAnalysis(stream);
-                        
-                        setupPeer(id => {
-                            const peers = rooms[code] || [];
-                            isOwner = peers.length === 0; // First person becomes owner
-                            
-                            peers.push(id);
-                            updateRoomData(code, peers);
-                            
-                            // Add self to users
-                            addUser(id, stream);
-                            
-                            // Connect to existing peers
-                            peers.forEach(peerId => {
-                                if (peerId !== id) {
-                                    const call = peer.call(peerId, localStream);
-                                    if (call) {
-                                        connections.set(peerId, call);
-                                        call.on('stream', stream => {
-                                            addUser(peerId, stream);
-                                        });
-                                    }
-                                }
-                            });
-                            
-                            showMessage(`Joined room ${code}`);
-                            showRoomCode(code);
-                            showSessionControls();
-                            
-                            if (isOwner) {
-                                document.getElementById('closeRoomBtn').classList.remove('hidden');
-                                showMessage('You are the room owner', 'success');
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        showMessage('Microphone access needed', 'error');
-                        updateStatus('offline', 'Microphone access denied');
-                    });
-            })
-            .catch(error => {
-                showMessage('Could not connect to room', 'error');
-                updateStatus('offline', 'Connection failed');
-            });
-        }
-
-// Update room data on server
-        async function updateRoomData(roomCode, peers) {
-            try {
-                const response = await fetch(roomsURL, {
-                    headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-                });
-                const data = await response.json();
-                const rooms = data.record || {};
-                
-                rooms[roomCode] = peers;
-                
-                await fetch(roomsURL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': '$2b$10$1234567890123456789012'
-                    },
-                    body: JSON.stringify(rooms)
-                });
-                
-                loadRooms();
-            } catch (error) {
-                console.error('Failed to update room data:', error);
-            }
-        }
-
-        // Show session controls
-        function showSessionControls() {
-            const sessionControls = document.getElementById('sessionControls');
-            sessionControls.classList.remove('hidden');
-        }
-
-        // Hide session controls
-        function hideSessionControls() {
-            const sessionControls = document.getElementById('sessionControls');
-            sessionControls.classList.add('hidden');
-        }
-
-        // Toggle mute/unmute
-        function toggleMute() {
-            const muteBtn = document.getElementById('muteBtn');
-            
-            if (localStream) {
-                const audioTracks = localStream.getAudioTracks();
-                audioTracks.forEach(track => {
-                    track.enabled = !track.enabled;
-                });
-                
-                isMuted = !isMuted;
-                muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
-                muteBtn.classList.toggle('active', isMuted);
-                
-                showMessage(isMuted ? 'Microphone muted' : 'Microphone unmuted');
-            }
-        }
-
-        // Leave current room
-        async function leaveRoom() {
-            if (!currentRoom) return;
-            
-            try {
-                // Stop all tracks
-                if (localStream) {
-                    localStream.getTracks().forEach(track => track.stop());
-                }
-                if (screenStream) {
-                    screenStream.getTracks().forEach(track => track.stop());
-                }
-                
-                // Close all connections
-                connections.forEach(call => call.close());
-                connections.clear();
-                
-                // Remove self from room data
-                const response = await fetch(roomsURL, {
-                    headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-                });
-                const data = await response.json();
-                const rooms = data.record || {};
-                
-                if (rooms[currentRoom] && peer) {
-                    rooms[currentRoom] = rooms[currentRoom].filter(id => id !== peer.id);
-                    
-                    // Remove room if empty
-                    if (rooms[currentRoom].length === 0) {
-                        delete rooms[currentRoom];
-                    }
-                    
-                    await fetch(roomsURL, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': '$2b$10$1234567890123456789012'
-                        },
-                        body: JSON.stringify(rooms)
-                    });
-                }
-                
-                // Reset state
-                currentRoom = null;
-                isOwner = false;
-                isMuted = false;
-                isScreenSharing = false;
-                users.clear();
-                bannedUsers.clear();
-                mutedUsers.clear();
-                
-                // Close peer connection
-                if (peer) {
-                    peer.destroy();
-                    peer = null;
-                }
-                
-                // Reset UI
-                hideSessionControls();
-                hideRoomCode();
-                updateStatus('offline', 'Disconnected');
-                updateUsersDisplay();
-                loadRooms();
-                
-                showMessage('Left the room');
-                
-            } catch (error) {
-                showMessage('Error leaving room', 'error');
-                console.error('Leave room error:', error);
-            }
-        }
-
-        // Close room (owner only)
-        async function closeRoom() {
-            if (!isOwner || !currentRoom) return;
-            
-            try {
-                // Get current room data
-                const response = await fetch(roomsURL, {
-                    headers: { 'X-Master-Key': '$2b$10$1234567890123456789012' }
-                });
-                const data = await response.json();
-                const rooms = data.record || {};
-                
-                // Remove the room entirely
-                delete rooms[currentRoom];
-                
-                await fetch(roomsURL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': '$2b$10$1234567890123456789012'
-                    },
-                    body: JSON.stringify(rooms)
-                });
-                
-                showMessage(`Room ${currentRoom} closed`);
-                
-                // Leave the room
-                leaveRoom();
-                
-            } catch (error) {
-                showMessage('Error closing room', 'error');
-                console.error('Close room error:', error);
-            }
-        }
-
-        // Handle enter key in room code input
-        document.getElementById('roomCode').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                joinRoom();
-            }
-        });
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRooms();
-            
-            // Refresh rooms every 30 seconds
-            setInterval(loadRooms, 30000);
-            
-            // Handle page unload
-            window.addEventListener('beforeunload', function() {
-                if (currentRoom) {
-                    leaveRoom();
-                }
-            });
-        });
-
-        // Handle audio context resume (required by some browsers)
-        document.addEventListener('click', function() {
-            if (audioContext && audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        }, { once: true });
-    </script>
+        setTimeout(() => {
+          processLink(); // restore text after 1.5 sec
+        }, 1500);
+      })
+      .catch(() => {
+        resultDiv.textContent = "failed to copy";
+      });
+  });
+</script>
 </body>
 </html>
