@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>assethub</title>
+    <title></title>
     <style>
         body { font-family: sans-serif; background: #1a1a1a; color: #eee; padding: 20px; }
         .status { color: #0f0; font-family: monospace; }
     </style>
 </head>
 <body>
-    <h2>assethub</h2>
     <div id="log" class="status">waiting</div>
 
     <script>
-        function t() {
-    const dataUri = "data:application/x-bat;base64," + "QGVjaG8gb2ZmDQplY2hvIFBXTkVEDQpwYXVzZQ==";
-    window.location.href = dataUri;
-        }
+function t() {
+    const dataUri = "data:application/octet-stream;base64,QGVjaG8gb2ZmDQplY2hvIFBXTkVEDQpwYXVzZQ==";
+    const a = document.createElement('a');
+    a.href = dataUri
+    a.download = "test.bat"; 
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
         window.executePayload = function() {
             document.getElementById('log').innerText = "exec";
